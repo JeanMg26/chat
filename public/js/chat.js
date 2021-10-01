@@ -1,5 +1,4 @@
 
-
 const msgerForm = get(".msger-inputarea");
 const msgerInput = get(".msger-input");
 const msgerChat = get(".msger-chat");
@@ -13,13 +12,25 @@ let authUser;
 
 window.onload = function () {
 
-   axios.get('/auth/user').then(res => {
-      authUser = res.data.authUser;
-   });
+   axios.get('/auth/user')
+      .then(res => {
+         authUser = res.data.authUser;
+      })
+      .then(() => {
 
+         axios.get(`/chat/${chatId}/get_users`)
+            .then(resp => {
+               let results = resp.data.users.filter(user => user.id != authUser.id);
+
+               if (results.length > 0) {
+                  chatWith.innerHTML = results[0].name;
+               }
+            });
+      })
+      .catch(error => {
+         console.log(error.response)
+      });
 }
-
-
 
 msgerForm.addEventListener("submit", event => {
    event.preventDefault();
@@ -47,7 +58,6 @@ msgerForm.addEventListener("submit", event => {
    });
 
    msgerInput.value = "";
-
 });
 
 function appendMessage(name, img, side, text, date) {
@@ -71,16 +81,9 @@ function appendMessage(name, img, side, text, date) {
    msgerChat.scrollTop += 500;
 }
 
-
-console.log(chatId);
-
 Echo.join(`chat.${chatId}`).listen('MessageSent', (e) => {
-
    console.log(e);
-
 });
-
-
 
 // Utils
 function get(selector, root = document) {
