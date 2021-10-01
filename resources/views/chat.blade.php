@@ -35,8 +35,8 @@
    </section>
 
    <script src='https://use.fontawesome.com/releases/v5.0.13/js/all.js'></script>
-   <script src="/js/app.js"></script>
-   <script src="/js/chat.js"></script>
+   <script src="{{ asset('js/app.js') }}"></script>
+   <script src="{{ asset('js/chat.js') }}"></script>
 
 </body>
 

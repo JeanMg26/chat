@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Events\UserCreated;
+use App\Events\UserDeleted;
+use App\Events\UserUpdated;
 use App\Models\Chat;
 use App\Models\Message;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -52,4 +55,11 @@ class User extends Authenticatable
    {
       return $this->hasMany(Message::class);
    }
+
+   protected $dispatchesEvents = [
+      'created' => UserCreated::class,
+      'updated' => UserUpdated::class,
+      'deleted' => UserDeleted::class
+   ];
+
 }

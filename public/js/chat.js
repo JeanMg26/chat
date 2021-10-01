@@ -1,3 +1,5 @@
+
+
 const msgerForm = get(".msger-inputarea");
 const msgerInput = get(".msger-input");
 const msgerChat = get(".msger-chat");
@@ -6,6 +8,16 @@ const PERSON_IMG = "https://image.flaticon.com/icons/svg/145/145867.svg";
 const chatWith = get(".chatWith");
 const typing = get(".typing");
 const chatStatus = get(".chatStatus");
+const chatId = window.location.pathname.substr(6);
+let authUser;
+
+window.onload = function () {
+
+   axios.get('/auth/user').then(res => {
+      authUser = res.data.authUser;
+   });
+
+}
 
 
 
@@ -14,7 +26,26 @@ msgerForm.addEventListener("submit", event => {
 
    const msgText = msgerInput.value;
    if (!msgText) return;
-   // implements with axios
+
+   axios.post('/message/sent', {
+      message: msgText,
+      chat_id: 1
+   }).then(res => {
+
+      let data = res.data;
+
+      appendMessage(
+         data.user.name,
+         PERSON_IMG,
+         'right',
+         data.content,
+         formatDate(new Date(data.created_at))
+      );
+   }).catch(error => {
+      console.log('ocurrio un error');
+      console.log(error);
+   });
+
    msgerInput.value = "";
 
 });
@@ -39,6 +70,16 @@ function appendMessage(name, img, side, text, date) {
    msgerChat.insertAdjacentHTML("beforeend", msgHTML);
    msgerChat.scrollTop += 500;
 }
+
+
+console.log(chatId);
+
+Echo.join(`chat.${chatId}`).listen('MessageSent', (e) => {
+
+   console.log(e);
+
+});
+
 
 
 // Utils
