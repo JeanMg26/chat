@@ -10,6 +10,7 @@ const typing = get(".typing");
 const chatStatus = get(".chatStatus");
 const chatId = window.location.pathname.substr(6);
 let authUser;
+let typingTimer = false;
 
 window.onload = function () {
    axios.get('/auth/user')
@@ -32,6 +33,56 @@ window.onload = function () {
                appedMessages(resp.data.messages);
             });
 
+      })
+      .then(() => {
+         // Envio de mensajes entre usuarios
+         Echo.join(`chat.${chatId}`)
+            .listen('MessageSent', (e) => {
+
+               appendMessage(
+                  e.message.user.name,
+                  PERSON_IMG,
+                  'left',
+                  e.message.content,
+                  formatDate(new Date(e.message.created_at))
+               );
+            })
+            .here(users => {
+               let result = users.filter(user => user.id != authUser.id);
+
+               if (result.length > 0) {
+                  chatStatus.className = 'chatStatus online';
+               }
+            })
+            .joining(user => {
+
+               if (user.id != authUser.id) {
+                  chatStatus.className = 'chatStatus online';
+               }
+            })
+            .leaving(user => {
+
+               if (user.id != authUser.id) {
+                  chatStatus.className = 'chatStatus offline';
+               }
+            })
+            .listenForWhisper('typing', (e) => {
+
+               if (e > 0)
+                  typing.style.display = '';
+
+               if (typingTimer) {
+                  clearTimeout(typingTimer);
+               }
+
+               typingTimer = setTimeout(() => {
+
+                  typing.style.display = 'none';
+                  typingTimer = false;
+
+               }, 3000);
+
+            });
       })
       .catch(error => {
          console.log(error.response)
@@ -107,19 +158,7 @@ function appendMessage(name, img, side, text, date) {
    scrollToBottom();
 }
 
-// Envio de mensajes entre usuarios
-Echo.join(`chat.${chatId}`)
-   .listen('MessageSent', (e) => {
 
-      appendMessage(
-         e.message.user.name,
-         PERSON_IMG,
-         'left',
-         e.message.content,
-         formatDate(new Date(e.message.created_at))
-      );
-
-   });
 
 // Utils
 function get(selector, root = document) {
@@ -136,6 +175,14 @@ function formatDate(date) {
 }
 
 function scrollToBottom() {
-
    msgerChat.scrollTop = msgerChat.scrollHeight;
+}
+
+function sendTypingEvent() {
+
+   typingTimer = true;
+
+   Echo.join(`chat.${chatId}`)
+      .whisper('typing', msgerInput.value.length);
+
 }
