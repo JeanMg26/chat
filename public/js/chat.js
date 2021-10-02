@@ -1,3 +1,4 @@
+// const { default: axios } = require("axios");
 
 const msgerForm = get(".msger-inputarea");
 const msgerInput = get(".msger-input");
@@ -11,13 +12,11 @@ const chatId = window.location.pathname.substr(6);
 let authUser;
 
 window.onload = function () {
-
    axios.get('/auth/user')
       .then(res => {
          authUser = res.data.authUser;
       })
       .then(() => {
-
          axios.get(`/chat/${chatId}/get_users`)
             .then(resp => {
                let results = resp.data.users.filter(user => user.id != authUser.id);
@@ -27,11 +26,19 @@ window.onload = function () {
                }
             });
       })
+      .then(() => {
+         axios.get(`/chat/${chatId}/get_messages`)
+            .then(resp => {
+               appedMessages(resp.data.messages);
+            });
+
+      })
       .catch(error => {
          console.log(error.response)
       });
 }
 
+// Enviar y guardar los mensajes en la bd
 msgerForm.addEventListener("submit", event => {
    event.preventDefault();
 
@@ -40,7 +47,7 @@ msgerForm.addEventListener("submit", event => {
 
    axios.post('/message/sent', {
       message: msgText,
-      chat_id: 1
+      chat_id: chatId
    }).then(res => {
 
       let data = res.data;
@@ -60,8 +67,27 @@ msgerForm.addEventListener("submit", event => {
    msgerInput.value = "";
 });
 
+// Dar formato a cada mensajes
+function appedMessages(messages) {
+
+   let side = '';
+
+   messages.forEach(message => {
+      side = (message.user_id == authUser.id) ? 'right' : 'left';
+
+      appendMessage(
+         message.user.name,
+         PERSON_IMG,
+         side,
+         message.content,
+         formatDate(new Date(message.created_at))
+      );
+   });
+}
+
+
 function appendMessage(name, img, side, text, date) {
-   //   Simple solution for small apps
+
    const msgHTML = `
     <div class="msg ${side}-msg">
       <div class="msg-img" style="background-image: url(${img})"></div>
@@ -78,12 +104,22 @@ function appendMessage(name, img, side, text, date) {
   `;
 
    msgerChat.insertAdjacentHTML("beforeend", msgHTML);
-   msgerChat.scrollTop += 500;
+   scrollToBottom();
 }
 
-Echo.join(`chat.${chatId}`).listen('MessageSent', (e) => {
-   console.log(e);
-});
+// Envio de mensajes entre usuarios
+Echo.join(`chat.${chatId}`)
+   .listen('MessageSent', (e) => {
+
+      appendMessage(
+         e.message.user.name,
+         PERSON_IMG,
+         'left',
+         e.message.content,
+         formatDate(new Date(e.message.created_at))
+      );
+
+   });
 
 // Utils
 function get(selector, root = document) {
@@ -97,4 +133,9 @@ function formatDate(date) {
    const h = "0" + date.getHours();
    const m = "0" + date.getMinutes();
    return `${d}/${mo}/${y} ${h.slice(-2)}:${m.slice(-2)}`;
+}
+
+function scrollToBottom() {
+
+   msgerChat.scrollTop = msgerChat.scrollHeight;
 }

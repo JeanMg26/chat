@@ -34,9 +34,10 @@ Route::get('auth/user', function () {
    return null;
 });
 
-Route::get('chat/with/{user}', [ChatController::class, 'chat_with']);
 Route::get('chat/{chat}', [ChatController::class, 'show'])->name('chat.show');
-Route::post('message/sent', [MessageController::class, 'sent'])->name('message.sent');
+Route::get('chat/with/{user}', [ChatController::class, 'chat_with']);
 Route::get('chat/{chat}/get_users', [ChatController::class, 'get_users'])->name('chat.get_users');
+Route::get('chat/{chat}/get_messages', [ChatController::class, 'get_messages'])->name('chat.get_messages');
+Route::post('message/sent', [MessageController::class, 'sent'])->name('message.sent');
 
 Route::view('users', 'users.showAll')->name('users.all');
