@@ -15,7 +15,7 @@
       <div class="row mt-5">
          <div class="col-10">
             <div class="card">
-               <div class="card-header">Usuarios
+               <div class="card-header">Usuarios Registrados
                </div>
                <div class="card-body">
                   <ul id="users"></ul>
@@ -24,24 +24,44 @@
          </div>
       </div>
    </div>
-   <script src="/js/app.js"></script>
+   <script src="{{ asset('js/app.js') }}"></script>
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js"></script>
    <script>
-      axios.get('api/users')
+      let authUser;
+
+      axios.get('/auth/user')
+         .then( resp => {
+            authUser = resp.data.authUser;
+            // console.log(authUser);
+         })
+         .then(() => {
+            axios.get('api/users')
                   .then( resp => {
-         const usersElement = document.getElementById('users');
+                     const usersElement = document.getElementById('users');
+                     const location = window.location.hostname;
 
-         let users = resp.data;
+                     let users = resp.data;
 
-         users.forEach((user, index) => {
-            let element = document.createElement('li');
+                     users.forEach((user, index) => {
 
-            element.setAttribute('id', user.id);
-            element.innerText = user.name;
+                        if(user.id != authUser.id){
+                           let element = document.createElement('li');
+                           let link = document.createElement('a');
 
-            usersElement.appendChild(element);
-      });
-   })
+                           element.setAttribute('id', user.id);
+                           link.innerText = user.name;
+                           link.setAttribute('href', "/chat/with/"+user.id)
+
+                           element.appendChild(link);
+                           usersElement.appendChild(element);
+                        }
+                     });
+                  });
+         });
+
+
+
+      
    </script>
 
    <script>
@@ -66,6 +86,7 @@
    </script>
 
 
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.22.0/axios.js"></script>
 
 </body>
 

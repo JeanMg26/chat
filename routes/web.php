@@ -26,11 +26,9 @@ Route::get('/dashboard', function () {
 require __DIR__ . '/auth.php';
 
 Route::get('auth/user', function () {
-
    if (auth()->check()) {
       return response()->json(['authUser' => auth()->user()]);
    }
-
    return null;
 });
 

@@ -8,8 +8,8 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <meta http-equiv="X-UA-Compatible" content="ie=edge">
    <meta name="csrf-token" content="{{ csrf_token() }}">
-   <link rel="stylesheet" href="/css/app.css">
-   <link rel="stylesheet" href="/css/chat.css">
+   <link rel="stylesheet" href="{{ asset('/css/app.css') }}">
+   <link rel="stylesheet" href="{{ asset('/css/chat.css') }}">
 </head>
 
 <body>
@@ -35,8 +35,9 @@
    </section>
 
    <script src='https://use.fontawesome.com/releases/v5.0.13/js/all.js'></script>
-   <script src="{{ asset('js/app.js') }}"></script>
-   <script src="{{ asset('js/chat.js') }}"></script>
+   {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.22.0/axios.js"></script> --}}
+   <script src="{{ asset('/js/app.js') }}"></script>
+   <script src="{{ asset('/js/chat.js') }}"></script>
 
 </body>
 
