@@ -39,6 +39,7 @@ Route::group(['middleware' => ['cors']], function () {
    Route::get('chat/{chat}/get_users', [ChatController::class, 'get_users'])->name('chat.get_users');
    Route::get('chat/{chat}/get_messages', [ChatController::class, 'get_messages'])->name('chat.get_messages');
    Route::post('message/sent', [MessageController::class, 'sent'])->name('message.sent');
+   Route::post('message/notification', [MessageController::class, 'notification'])->name('message.notification');
 
    Route::view('users', 'users.showAll')->name('users.all');
 

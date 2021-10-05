@@ -1,5 +1,7 @@
 // const { default: axios } = require("axios");
 
+// const { default: axios } = require("axios");
+
 const msgerForm = get(".msger-inputarea");
 const msgerInput = get(".msger-input");
 const msgerChat = get(".msger-chat");
@@ -99,21 +101,32 @@ msgerForm.addEventListener("submit", event => {
    axios.post('/message/sent', {
       message: msgText,
       chat_id: chatId
-   }).then(res => {
+   })
+      .then(res => {
 
-      let data = res.data;
+         let data = res.data;
 
-      appendMessage(
-         data.user.name,
-         PERSON_IMG,
-         'right',
-         data.content,
-         formatDate(new Date(data.created_at))
-      );
-   }).catch(error => {
-      console.log('ocurrio un error');
-      console.log(error);
-   });
+         appendMessage(
+            data.user.name,
+            PERSON_IMG,
+            'right',
+            data.content,
+            formatDate(new Date(data.created_at))
+         );
+      })
+      .then(() => {
+         axios.post('/message/notification', {
+            message: msgText,
+         })
+            .then(resp => {
+               let data = resp.data;
+               console.log(data.content);
+            });
+      })
+      .catch(error => {
+         console.log('ocurrio un error');
+         console.log(error);
+      });
 
    msgerInput.value = "";
 });
