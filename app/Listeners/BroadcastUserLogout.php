@@ -26,7 +26,7 @@ class BroadcastUserLogout
    public function handle(Logout $event)
    {
       // $user = auth()->user();
-      broadcast(new UserSessionChanged($event->user->name, 'danger'));
+      broadcast(new UserSessionChanged($event->user->id, 'danger'));
 
    }
 }

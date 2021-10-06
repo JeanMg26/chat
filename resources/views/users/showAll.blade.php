@@ -53,11 +53,14 @@
                         if(user.id != authUser.id){
                            let element = document.createElement('li');
                            let link = document.createElement('a');
+                           let icon = document.createElement('i');
 
                            element.setAttribute('id', user.id);
-                           link.setAttribute('id', 'status'+user.id);
                            link.innerText = user.name;
                            link.setAttribute('href', "/chat/with/"+user.id)
+                           icon.setAttribute('id', 'status'+user.id);
+                           icon.className = 'fas fa-circle me-2 text-danger';
+                           link.prepend(icon);
 
                            element.appendChild(link);
                            usersElement.appendChild(element);
@@ -99,9 +102,14 @@
             .listen('UserSessionChanged', (e) => {
                // console.log(e.user.id);
 
-               // let user = document.getElementById('status3');
-               // console.log(e.user.id);
-               console.log(e);
+               let icon = document.getElementById('status'+e.message);
+
+               icon.classList.remove('text-danger');
+               icon.classList.remove('text-success');
+
+               icon.classList.add('text-'+e.type);
+               
+               // console.log(user);
             });
    </script>
 
