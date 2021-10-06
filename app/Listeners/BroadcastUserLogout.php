@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\UserSessionChanged;
+use Illuminate\Auth\Events\Logout;
 
 class BroadcastUserLogout
 {
@@ -22,10 +23,10 @@ class BroadcastUserLogout
     * @param  object  $event
     * @return void
     */
-   public function handle($event)
+   public function handle(Logout $event)
    {
       // $user = auth()->user();
-      broadcast(new UserSessionChanged($event->user, 'danger'));
+      broadcast(new UserSessionChanged($event->user->name, 'danger'));
 
    }
 }

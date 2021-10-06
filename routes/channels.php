@@ -23,3 +23,7 @@ Broadcast::channel('chat.{chat_id}', function ($user, $chat_id) {
       return $user;
    }
 });
+
+Broadcast::channel('notifications', function ($user) {
+   return $user != null;
+});

@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\UserSessionChanged;
-use App\Models\User;
+use Illuminate\Auth\Events\Login;
 
 class BroadcastUserLogin
 {
@@ -23,10 +23,10 @@ class BroadcastUserLogin
     * @param  object  $event
     * @return void
     */
-   public function handle($event)
+   public function handle(Login $event)
    {
       // $authUser = $event->user->name;
-      broadcast(new UserSessionChanged($event->user, 'success'));
+      broadcast(new UserSessionChanged($event->user->name, 'success'));
 
    }
 }

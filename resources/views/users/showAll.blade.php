@@ -55,6 +55,7 @@
                            let link = document.createElement('a');
 
                            element.setAttribute('id', user.id);
+                           link.setAttribute('id', 'status'+user.id);
                            link.innerText = user.name;
                            link.setAttribute('href', "/chat/with/"+user.id)
 
@@ -75,6 +76,7 @@
          .listen('UserCreated', (e) => {
 
             const usersElement = document.getElementById('users');
+
             let element = document.createElement('li');
             element.setAttribute('id', e.user.id);
             element.innerText = e.user.name;
@@ -84,12 +86,30 @@
 
             let element = document.getElementById(e.user.id);
             element.innerText = e.user.name;
-         }).listen('UserDeleted', (e) => {
+         })
+         .listen('UserDeleted', (e) => {
 
             let element = document.getElementById(e.user.id);
             element.parentNode.removeChild(element);
          });
    </script>
+
+   <script>
+      Echo.private('notifications')
+            .listen('UserSessionChanged', (e) => {
+               // console.log(e.user.id);
+
+               // let user = document.getElementById('status3');
+               // console.log(e.user.id);
+               console.log(e);
+            });
+   </script>
+
+
+
+
+
+
 
 
    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.22.0/axios.js"></script>
