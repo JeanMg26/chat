@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\UserCreated;
+use App\Events\UserDeleted;
+use App\Events\UserUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -29,7 +32,9 @@ class UserController extends Controller
       $data             = $request->all();
       $data['password'] = bcrypt($request->password);
 
-      return User::create($data);
+      $user = User::create($data);
+      broadcast(new UserCreated($user));
+      return $user;
    }
 
    /**
@@ -58,6 +63,8 @@ class UserController extends Controller
       $user->fill($data);
       $user->save();
 
+      broadcast(new UserUpdated($user));
+
       return $user;
    }
 
@@ -70,6 +77,8 @@ class UserController extends Controller
    public function destroy(User $user)
    {
       $user->delete();
+
+      broadcast(new UserDeleted($user));
 
       return $user;
    }

@@ -26,7 +26,7 @@ class BroadcastUserLogin
    public function handle(Login $event)
    {
       // $authUser = $event->user->name;
-      broadcast(new UserSessionChanged($event->user->id, 'success'));
+      broadcast(new UserSessionChanged($event->user, 'success'));
 
    }
 }

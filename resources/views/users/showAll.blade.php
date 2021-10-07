@@ -19,12 +19,12 @@
                <div class="card-header">
                   <div class="d-flex justify-content-between align-items-center">
                      <p class="mb-0">Usuarios Registrados</p>
-                     <p class="mb-0"><i class="fas fa-circle me-2 text-success"></i><strong>{{ auth()->user()->name }}</strong></p>
+                     <p class="mb-0"><i class="fas fa-circle me-2" id="status{{ auth()->user()->id }}"></i><strong>{{ auth()->user()->name }}</strong></p>
                   </div>
 
                </div>
                <div class="card-body">
-                  <ul id="users"></ul>
+                  <ul id="users" class="list-unstyled"></ul>
                </div>
             </div>
          </div>
@@ -32,7 +32,9 @@
    </div>
    <script src="{{ asset('js/app.js') }}"></script>
    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
-   <script>
+
+
+   {{-- <script>
       let authUser;
 
       axios.get('/auth/user')
@@ -56,9 +58,11 @@
                            let icon = document.createElement('i');
 
                            element.setAttribute('id', user.id);
+                           link.setAttribute('id', 'link'+user.id);
                            link.innerText = user.name;
                            link.setAttribute('href', "/chat/with/"+user.id)
                            icon.setAttribute('id', 'status'+user.id);
+                           // icon.setAttribute('id', 'status');
                            icon.className = 'fas fa-circle me-2 text-danger';
                            link.prepend(icon);
 
@@ -68,11 +72,7 @@
                      });
                   });
          });
-
-
-
-      
-   </script>
+   </script> --}}
 
    <script>
       Echo.channel('users')
@@ -81,14 +81,29 @@
             const usersElement = document.getElementById('users');
 
             let element = document.createElement('li');
+            let link = document.createElement('a');
+            let icon = document.createElement('i');
+
             element.setAttribute('id', e.user.id);
-            element.innerText = e.user.name;
+            link.setAttribute('id', 'link'+user.id);
+            link.innerText = e.user.name;
+            link.setAttribute('href', "/chat/with/"+e.user.id)
+            icon.setAttribute('id', 'status'+e.user.id);
+            icon.className = 'fas fa-circle me-2 text-danger';
+            link.prepend(icon);
+            element.appendChild(link);
             usersElement.appendChild(element);
          })
          .listen('UserUpdated', (e) => {
 
-            let element = document.getElementById(e.user.id);
-            element.innerText = e.user.name;
+            let link = document.getElementById('link'+e.user.id);
+            let icon = document.createElement('i');
+            link.innerText = e.user.name;
+            icon.setAttribute('id', 'status'+e.user.id);
+            icon.className = 'fas fa-circle me-2 text-danger';
+            link.prepend(icon);
+            // console.log(e.user.name);
+            console.log(link);
          })
          .listen('UserDeleted', (e) => {
 
@@ -98,19 +113,79 @@
    </script>
 
    <script>
-      Echo.private('notifications')
-            .listen('UserSessionChanged', (e) => {
-               // console.log(e.user.id);
+      // Echo.private('notifications')
+      //       .listen('UserSessionChanged', (e) => {
+      //          // console.log(e.user.id);
 
-               let icon = document.getElementById('status'+e.message);
+      //          let icon = document.getElementById('status'+e.user.id);
 
-               icon.classList.remove('text-danger');
-               icon.classList.remove('text-success');
+      //          icon.classList.remove('text-danger');
+      //          icon.classList.remove('text-success');
 
-               icon.classList.add('text-'+e.type);
+      //          icon.classList.add('text-'+e.type);
                
-               // console.log(user);
+      //          // console.log(e.user.id);
+      //       });
+
+      let authUser;
+
+      const usersElement = document.getElementById('users');
+
+      axios.get('/auth/user')
+         .then( resp => {
+            authUser = resp.data.authUser;
+         })
+         .then( () => {
+
+            Echo.join('users')
+            .here( (users) => {
+
+               users.forEach( (user, index) => {
+
+                  if(authUser.id != user.id) {
+                     let element = document.createElement('li');
+                     let link = document.createElement('a');
+                     let icon = document.createElement('i');
+
+                     element.setAttribute('id', user.id);
+                     link.setAttribute('id', 'link'+user.id);
+                     link.innerText = user.name;
+                     link.setAttribute('href', "/chat/with/"+user.id)
+                     icon.className = 'fas fa-circle me-2 text-success';
+                     link.prepend(icon);
+                     element.appendChild(link);
+                     usersElement.appendChild(element); 
+                  }
+               });
+            })
+            .joining( (user) => {
+                  let element = document.createElement('li');
+                  let link = document.createElement('a');
+                  let icon = document.createElement('i');
+
+                  element.setAttribute('id', user.id);
+                  link.setAttribute('id', 'link'+user.id);
+                  link.innerText = user.name;
+                  link.setAttribute('href', "/chat/with/"+user.id)
+                  icon.className = 'fas fa-circle me-2 text-success';
+                  link.prepend(icon);
+                  element.appendChild(link);
+                  usersElement.appendChild(element);
+               console.log(status);
+            })
+            .leaving( (user) => {
+               let element = document.getElementById(user.id);
+               element.parentNode.removeChild(element);
             });
+      
+
+         });
+
+
+
+
+
+
    </script>
 
 

@@ -24,11 +24,11 @@ class MessageController extends Controller
       return $message;
    }
 
-   public function notification(Request $request)
-   {
-      $msn = $request->message;
-      broadcast(new MessageSent($msn))->toOthers();
-      return $msn;
-   }
+   // public function notification(Request $request)
+   // {
+   //    $msn = $request->message;
+   //    broadcast(new MessageSent($msn))->toOthers();
+   //    return $msn;
+   // }
 
 }
