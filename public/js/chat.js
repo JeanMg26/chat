@@ -114,15 +114,6 @@ msgerForm.addEventListener("submit", event => {
             formatDate(new Date(data.created_at))
          );
       })
-      .then(() => {
-         axios.post('/message/notification', {
-            message: msgText,
-         })
-            .then(resp => {
-               let data = resp.data;
-               console.log(data.content);
-            });
-      })
       .catch(error => {
          console.log('ocurrio un error');
          console.log(error);

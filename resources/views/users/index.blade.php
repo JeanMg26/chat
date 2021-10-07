@@ -10,6 +10,12 @@
    <title>Usuarios</title>
 </head>
 
+<style>
+   .cursor {
+      cursor: pointer;
+   }
+</style>
+
 <body>
    @include('users.navbar')
    <div class="container">
@@ -18,13 +24,14 @@
             <div class="card">
                <div class="card-header">
                   <div class="d-flex justify-content-between align-items-center">
-                     <p class="mb-0">Usuarios Registrados</p>
-                     <p class="mb-0"><i class="fas fa-circle me-2" id="status{{ auth()->user()->id }}"></i><strong>{{ auth()->user()->name }}</strong></p>
+                     <p class="mb-0">Usuarios En linea</p>
+                     <p class="mb-0"><i class="fas fa-circle me-2 " id="status{{ auth()->user()->id }}"></i><strong>{{ auth()->user()->name }}</strong></p>
                   </div>
 
                </div>
                <div class="card-body">
                   <ul id="users" class="list-unstyled"></ul>
+
                </div>
             </div>
          </div>
@@ -88,6 +95,7 @@
             link.setAttribute('id', 'link'+user.id);
             link.innerText = e.user.name;
             link.setAttribute('href', "/chat/with/"+e.user.id)
+            // link.setAttribute('onclick', 'greetUser("' + e.user.id + '")');
             icon.setAttribute('id', 'status'+e.user.id);
             icon.className = 'fas fa-circle me-2 text-danger';
             link.prepend(icon);
@@ -134,6 +142,9 @@
       axios.get('/auth/user')
          .then( resp => {
             authUser = resp.data.authUser;
+
+            const status =  document.getElementById('status'+authUser.id);
+            status.classList.add('text-success')
          })
          .then( () => {
 
@@ -150,7 +161,8 @@
                      element.setAttribute('id', user.id);
                      link.setAttribute('id', 'link'+user.id);
                      link.innerText = user.name;
-                     link.setAttribute('href', "/chat/with/"+user.id)
+                     link.className = 'text-decoration-none cursor';
+                     link.setAttribute('onclick', 'window.open("/chat/with/'+user.id+'")');
                      icon.className = 'fas fa-circle me-2 text-success';
                      link.prepend(icon);
                      element.appendChild(link);
@@ -166,7 +178,8 @@
                   element.setAttribute('id', user.id);
                   link.setAttribute('id', 'link'+user.id);
                   link.innerText = user.name;
-                  link.setAttribute('href', "/chat/with/"+user.id)
+                  link.className = 'text-decoration-none cursor';
+                     link.setAttribute('onclick', 'window.open("/chat/with/'+user.id+'")');
                   icon.className = 'fas fa-circle me-2 text-success';
                   link.prepend(icon);
                   element.appendChild(link);
@@ -180,6 +193,14 @@
       
 
          });
+
+
+         // utils
+         function setAttributes(el, attrs) {
+            for(var key in attrs) {
+               el.setAttribute(key, attrs[key]);
+            }
+         }
 
 
 
